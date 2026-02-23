@@ -12,27 +12,27 @@ class AndroidService
         private AndroidRepository $repository
     ) {}
 
-    public function listar(): Collection
+    public function list(): Collection
     {
         return $this->repository->getAll();
     }
 
-    public function crear(array $data): Android
+    public function create(array $data): Android
     {
         return $this->repository->create($data);
     }
 
-    public function obtener(int $id): ?Android
+    public function findById(int $id): ?Android
     {
         return $this->repository->findById($id);
     }
 
-    public function actualizar(Android $android, array $data): Android
+    public function update(Android $android, array $data): Android
     {
         return $this->repository->update($android, $data);
     }
 
-    public function eliminar(Android $android): bool
+    public function delete(Android $android): bool
     {
         return $this->repository->delete($android);
     }

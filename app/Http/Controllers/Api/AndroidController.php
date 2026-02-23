@@ -17,12 +17,12 @@ class AndroidController extends Controller
 
     public function index(): JsonResponse
     {
-        return response()->json($this->service->listar());
+        return response()->json($this->service->list());
     }
 
     public function store(AndroidStoreRequest $request): JsonResponse
     {
-        $android = $this->service->crear($request->validated());
+        $android = $this->service->create($request->validated());
 
         return response()->json($android, 201);
     }
@@ -34,14 +34,14 @@ class AndroidController extends Controller
 
     public function update(AndroidUpdateRequest $request, Android $android): JsonResponse
     {
-        $android = $this->service->actualizar($android, $request->validated());
+        $android = $this->service->update($android, $request->validated());
 
         return response()->json($android);
     }
 
     public function destroy(Android $android): JsonResponse
     {
-        $this->service->eliminar($android);
+        $this->service->delete($android);
 
         return response()->json(null, 204);
     }

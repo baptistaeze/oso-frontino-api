@@ -17,12 +17,12 @@ class AudifonoController extends Controller
 
     public function index(): JsonResponse
     {
-        return response()->json($this->service->listar());
+        return response()->json($this->service->list());
     }
 
     public function store(AudifonoStoreRequest $request): JsonResponse
     {
-        $audifono = $this->service->crear($request->validated());
+        $audifono = $this->service->create($request->validated());
 
         return response()->json($audifono, 201);
     }
@@ -34,14 +34,14 @@ class AudifonoController extends Controller
 
     public function update(AudifonoUpdateRequest $request, Audifono $audifono): JsonResponse
     {
-        $audifono = $this->service->actualizar($audifono, $request->validated());
+        $audifono = $this->service->update($audifono, $request->validated());
 
         return response()->json($audifono);
     }
 
     public function destroy(Audifono $audifono): JsonResponse
     {
-        $this->service->eliminar($audifono);
+        $this->service->delete($audifono);
 
         return response()->json(null, 204);
     }

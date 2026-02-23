@@ -17,12 +17,12 @@ class SmartWatchController extends Controller
 
     public function index(): JsonResponse
     {
-        return response()->json($this->service->listar());
+        return response()->json($this->service->list());
     }
 
     public function store(SmartWatchStoreRequest $request): JsonResponse
     {
-        $smartWatch = $this->service->crear($request->validated());
+        $smartWatch = $this->service->create($request->validated());
 
         return response()->json($smartWatch, 201);
     }
@@ -34,14 +34,14 @@ class SmartWatchController extends Controller
 
     public function update(SmartWatchUpdateRequest $request, SmartWatch $smartWatch): JsonResponse
     {
-        $smartWatch = $this->service->actualizar($smartWatch, $request->validated());
+        $smartWatch = $this->service->update($smartWatch, $request->validated());
 
         return response()->json($smartWatch);
     }
 
     public function destroy(SmartWatch $smartWatch): JsonResponse
     {
-        $this->service->eliminar($smartWatch);
+        $this->service->delete($smartWatch);
 
         return response()->json(null, 204);
     }

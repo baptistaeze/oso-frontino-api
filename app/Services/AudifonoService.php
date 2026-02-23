@@ -12,27 +12,27 @@ class AudifonoService
         private AudifonoRepository $repository
     ) {}
 
-    public function listar(): Collection
+    public function list(): Collection
     {
         return $this->repository->getAll();
     }
 
-    public function crear(array $data): Audifono
+    public function create(array $data): Audifono
     {
         return $this->repository->create($data);
     }
 
-    public function obtener(int $id): ?Audifono
+    public function findById(int $id): ?Audifono
     {
         return $this->repository->findById($id);
     }
 
-    public function actualizar(Audifono $audifono, array $data): Audifono
+    public function update(Audifono $audifono, array $data): Audifono
     {
         return $this->repository->update($audifono, $data);
     }
 
-    public function eliminar(Audifono $audifono): bool
+    public function delete(Audifono $audifono): bool
     {
         return $this->repository->delete($audifono);
     }

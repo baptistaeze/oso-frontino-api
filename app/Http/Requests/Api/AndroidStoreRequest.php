@@ -14,13 +14,13 @@ class AndroidStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'precio' => 'required|numeric|min:0',
-            'descuento' => 'nullable|numeric|min:0|max:100',
-            'cantidad_stock' => 'nullable|integer|min:0',
-            'monto' => 'nullable|numeric|min:0',
-            'imagen_path' => 'nullable|string|max:500',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0|max:100',
+            'quantity_stock' => 'nullable|integer|min:0',
+            'amount' => 'nullable|numeric|min:0',
+            'image_path' => 'nullable|string|max:500',
         ];
     }
 }

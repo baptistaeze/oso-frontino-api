@@ -14,13 +14,13 @@ class AndroidUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'sometimes|string|max:255',
-            'descripcion' => 'nullable|string',
-            'precio' => 'sometimes|numeric|min:0',
-            'descuento' => 'nullable|numeric|min:0|max:100',
-            'cantidad_stock' => 'nullable|integer|min:0',
-            'monto' => 'nullable|numeric|min:0',
-            'imagen_path' => 'nullable|string|max:500',
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'sometimes|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0|max:100',
+            'quantity_stock' => 'nullable|integer|min:0',
+            'amount' => 'nullable|numeric|min:0',
+            'image_path' => 'nullable|string|max:500',
         ];
     }
 }
