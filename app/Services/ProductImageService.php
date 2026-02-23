@@ -11,6 +11,7 @@ class ProductImageService
 
     private const MIME_EXTENSIONS = [
         'image/jpeg' => 'jpg',
+        'image/pjpeg' => 'jpg',
         'image/png' => 'png',
         'image/gif' => 'gif',
     ];
@@ -31,8 +32,7 @@ class ProductImageService
         $tempPath = $this->validator->reEncodeToCleanFile($file);
 
         try {
-            $mime = $file->getMimeType();
-            $ext = self::MIME_EXTENSIONS[$mime] ?? 'jpg';
+            $ext = strtolower(pathinfo($tempPath, PATHINFO_EXTENSION)) ?: 'jpg';
             $filename = Str::uuid() . '.' . $ext;
             $directory = "products/{$productType}";
 

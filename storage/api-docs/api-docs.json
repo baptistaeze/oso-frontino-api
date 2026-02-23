@@ -29,7 +29,23 @@
                 "operationId": "androids.index",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": 1,
+                                            "name": "Samsung Galaxy",
+                                            "price": 899.99,
+                                            "quantityStock": 5,
+                                            "imagePath": "http://localhost:8002/storage/products/androids/img.jpg"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -42,6 +58,47 @@
                 "requestBody": {
                     "required": true,
                     "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Samsung Galaxy"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "example": 899.99
+                                    },
+                                    "discount": {
+                                        "type": "number"
+                                    },
+                                    "quantity_stock": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "image": {
+                                        "description": "Imagen JPG, PNG o GIF (max 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image_path": {
+                                        "description": "Path alternativo si no subes imagen",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
                         "application/json": {
                             "schema": {
                                 "required": [
@@ -51,7 +108,12 @@
                             },
                             "example": {
                                 "name": "Samsung Galaxy",
-                                "price": 899.99
+                                "description": "Android smartphone",
+                                "price": 899.99,
+                                "discount": 10,
+                                "quantity_stock": 5,
+                                "amount": 809.99,
+                                "image_path": "storage/products/androids/img.jpg"
                             }
                         }
                     }
@@ -113,6 +175,55 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    },
+                                    "discount": {
+                                        "type": "number"
+                                    },
+                                    "quantity_stock": {
+                                        "type": "integer"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "image": {
+                                        "description": "Imagen JPG, PNG o GIF",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image_path": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {},
+                            "example": {
+                                "name": "Samsung Galaxy S24",
+                                "description": "Updated",
+                                "price": 949.99,
+                                "discount": 5,
+                                "quantity_stock": 10,
+                                "amount": 902.99,
+                                "image_path": "storage/products/androids/img.jpg"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -186,6 +297,46 @@
                 "requestBody": {
                     "required": true,
                     "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "AirPods Pro"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "example": 249.99
+                                    },
+                                    "discount": {
+                                        "type": "number"
+                                    },
+                                    "quantity_stock": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "image": {
+                                        "description": "Imagen JPG, PNG o GIF (max 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image_path": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
                         "application/json": {
                             "schema": {
                                 "required": [
@@ -195,7 +346,12 @@
                             },
                             "example": {
                                 "name": "AirPods Pro",
-                                "price": 249.99
+                                "description": "Wireless earbuds",
+                                "price": 249.99,
+                                "discount": 0,
+                                "quantity_stock": 20,
+                                "amount": 249.99,
+                                "image_path": "storage/products/audifonos/img.jpg"
                             }
                         }
                     }
@@ -581,14 +737,12 @@
                             "schema": {
                                 "required": [
                                     "product_type",
-                                    "product_id",
-                                    "price"
+                                    "product_id"
                                 ]
                             },
                             "example": {
                                 "product_type": "iphone",
                                 "product_id": 1,
-                                "price": 999.99,
                                 "quantity": 2
                             }
                         }
@@ -596,13 +750,64 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Created"
+                        "description": "Item added"
                     },
                     "401": {
                         "description": "Unauthenticated"
                     },
                     "404": {
                         "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Product not found or insufficient stock"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/baskets/{id}/items/{itemId}": {
+            "delete": {
+                "tags": [
+                    "Baskets"
+                ],
+                "summary": "Remove item from basket",
+                "operationId": "baskets.removeItem",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Basket ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "itemId",
+                        "in": "path",
+                        "description": "Basket item ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Item removed, stock restored"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Cannot modify charged basket or item does not belong to basket"
                     }
                 },
                 "security": [
@@ -734,6 +939,46 @@
                 "requestBody": {
                     "required": true,
                     "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "iPhone 15 Pro"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "example": 999.99
+                                    },
+                                    "discount": {
+                                        "type": "number"
+                                    },
+                                    "quantity_stock": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "image": {
+                                        "description": "Imagen JPG, PNG o GIF (max 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image_path": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
                         "application/json": {
                             "schema": {
                                 "required": [
@@ -747,7 +992,7 @@
                                 "price": 999.99,
                                 "discount": 10,
                                 "quantity_stock": 5,
-                                "monto": 899.99,
+                                "amount": 899.99,
                                 "image_path": "storage/iphones/iphone15.jpg"
                             }
                         }
@@ -853,6 +1098,39 @@
                 ],
                 "requestBody": {
                     "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    },
+                                    "discount": {
+                                        "type": "number"
+                                    },
+                                    "quantity_stock": {
+                                        "type": "integer"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "image": {
+                                        "description": "Imagen JPG, PNG o GIF",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image_path": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
                         "application/json": {
                             "schema": {},
                             "example": {
@@ -943,6 +1221,46 @@
                 "requestBody": {
                     "required": true,
                     "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Apple Watch"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "example": 399.99
+                                    },
+                                    "discount": {
+                                        "type": "number"
+                                    },
+                                    "quantity_stock": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "image": {
+                                        "description": "Imagen JPG, PNG o GIF (max 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image_path": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
                         "application/json": {
                             "schema": {
                                 "required": [
@@ -952,7 +1270,12 @@
                             },
                             "example": {
                                 "name": "Apple Watch",
-                                "price": 399.99
+                                "description": "Smartwatch",
+                                "price": 399.99,
+                                "discount": 5,
+                                "quantity_stock": 10,
+                                "amount": 379.99,
+                                "image_path": "storage/products/smart-watches/img.jpg"
                             }
                         }
                     }
