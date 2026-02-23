@@ -23,10 +23,43 @@ class AudifonoController extends Controller
         return AudifonoResource::collection($this->service->list())->response();
     }
 
-    #[OA\Post(path: '/audifonos', tags: ['Audifonos'], summary: 'Create audifono', operationId: 'audifonos.store', security: [['bearerAuth' => []]], requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(required: ['name', 'price'], example: ['name' => 'AirPods Pro', 'price' => 249.99])), responses: [new OA\Response(response: 201, description: 'Created'), new OA\Response(response: 401, description: 'Unauthenticated')])]
+    #[OA\Post(
+        path: '/audifonos',
+        tags: ['Audifonos'],
+        summary: 'Create audifono',
+        operationId: 'audifonos.store',
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\JsonContent(
+                    required: ['name', 'price'],
+                    example: ['name' => 'AirPods Pro', 'description' => 'Wireless earbuds', 'price' => 249.99, 'discount' => 0, 'quantity_stock' => 20, 'amount' => 249.99, 'image_path' => 'storage/products/audifonos/img.jpg']
+                ),
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        type: 'object',
+                        required: ['name', 'price'],
+                        properties: [
+                            new OA\Property(property: 'name', type: 'string', example: 'AirPods Pro'),
+                            new OA\Property(property: 'description', type: 'string'),
+                            new OA\Property(property: 'price', type: 'number', example: 249.99),
+                            new OA\Property(property: 'discount', type: 'number'),
+                            new OA\Property(property: 'quantity_stock', type: 'integer', example: 20),
+                            new OA\Property(property: 'amount', type: 'number'),
+                            new OA\Property(property: 'image', type: 'string', format: 'binary', description: 'Imagen JPG, PNG o GIF (max 5MB)'),
+                            new OA\Property(property: 'image_path', type: 'string'),
+                        ]
+                    )
+                ),
+            ]
+        ),
+        responses: [new OA\Response(response: 201, description: 'Created'), new OA\Response(response: 401, description: 'Unauthenticated')]
+    )]
     public function store(AudifonoStoreRequest $request): JsonResponse
     {
-        $audifono = $this->service->create($request->validated());
+        $audifono = $this->service->create($request->validatedData());
 
         return (new AudifonoResource($audifono))->response()->setStatusCode(201);
     }
@@ -40,7 +73,7 @@ class AudifonoController extends Controller
     #[OA\Put(path: '/audifonos/{id}', tags: ['Audifonos'], summary: 'Update audifono', operationId: 'audifonos.update', security: [['bearerAuth' => []]], parameters: [new OA\PathParameter(name: 'id', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'OK'), new OA\Response(response: 401, description: 'Unauthenticated'), new OA\Response(response: 404, description: 'Not found')])]
     public function update(AudifonoUpdateRequest $request, Audifono $audifono): JsonResponse
     {
-        $audifono = $this->service->update($audifono, $request->validated());
+        $audifono = $this->service->update($audifono, $request->validatedData());
 
         return (new AudifonoResource($audifono))->response();
     }

@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('baskets/{basket}', [BasketController::class, 'update']);
     Route::delete('baskets/{basket}', [BasketController::class, 'destroy']);
     Route::post('baskets/{basket}/items', [BasketController::class, 'addItem']);
+    Route::delete('baskets/{basket}/items/{item}', [BasketController::class, 'removeItem']);
     Route::post('baskets/{basket}/charge', [BasketController::class, 'charge']);
 });
 

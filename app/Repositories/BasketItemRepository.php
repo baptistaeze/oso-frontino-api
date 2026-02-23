@@ -14,4 +14,9 @@ class BasketItemRepository
     {
         return $this->model->create($data);
     }
+
+    public function delete(BasketItem $item): bool
+    {
+        return $item->delete();
+    }
 }

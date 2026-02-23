@@ -16,7 +16,6 @@ class BasketItemRequest extends FormRequest
         return [
             'product_type' => 'required|in:iphone,smart_watch,android,audifono',
             'product_id' => 'required|integer|min:1',
-            'price' => 'required|numeric|min:0',
             'quantity' => 'nullable|integer|min:1',
         ];
     }

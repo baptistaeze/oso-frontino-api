@@ -14,7 +14,8 @@ class BasketService
     public function __construct(
         private BasketRepository $basketRepository,
         private BasketItemRepository $basketItemRepository,
-        private InvoiceRepository $invoiceRepository
+        private InvoiceRepository $invoiceRepository,
+        private ProductResolver $productResolver
     ) {}
 
     public function list(): Collection
@@ -46,13 +47,56 @@ class BasketService
         return $this->basketRepository->delete($basket);
     }
 
-    public function addItem(Basket $basket, array $data): BasketItem
+    public function addItem(Basket $basket, array $data): array
     {
         $this->validateBasketModifiable($basket);
 
-        $data['basket_id'] = $basket->id;
+        $product = $this->productResolver->find($data['product_type'], $data['product_id']);
 
-        return $this->basketItemRepository->create($data);
+        if (! $product) {
+            throw new \DomainException('Product not found');
+        }
+
+        $quantity = (int) ($data['quantity'] ?? 1);
+        $quantityStock = (int) $product->quantity_stock;
+
+        if ($quantityStock < $quantity) {
+            throw new \DomainException("Insufficient stock. Available: {$quantityStock}, requested: {$quantity}");
+        }
+
+        $price = $this->productResolver->getSalePrice($product);
+
+        $item = $this->basketItemRepository->create([
+            'basket_id' => $basket->id,
+            'product_type' => $data['product_type'],
+            'product_id' => $product->id,
+            'price' => $price,
+            'quantity' => $quantity,
+        ]);
+
+        $product->decrement('quantity_stock', $quantity);
+
+        return [
+            'item' => $item,
+            'product' => $product,
+        ];
+    }
+
+    public function removeItem(Basket $basket, BasketItem $item): void
+    {
+        $this->validateBasketModifiable($basket);
+
+        if ($item->basket_id !== $basket->id) {
+            throw new \DomainException('Item does not belong to this basket');
+        }
+
+        $product = $this->productResolver->find($item->product_type, $item->product_id);
+
+        if ($product) {
+            $product->increment('quantity_stock', (int) $item->quantity);
+        }
+
+        $this->basketItemRepository->delete($item);
     }
 
     public function charge(Basket $basket): array

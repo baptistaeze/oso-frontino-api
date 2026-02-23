@@ -56,18 +56,37 @@ class IphoneController extends Controller
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(
-                required: ['name', 'price'],
-                example: [
-                    'name' => 'iPhone 15 Pro',
-                    'description' => 'Latest iPhone model',
-                    'price' => 999.99,
-                    'discount' => 10,
-                    'quantity_stock' => 5,
-                    'monto' => 899.99,
-                    'image_path' => 'storage/iphones/iphone15.jpg',
-                ]
-            )
+            content: [
+                new OA\JsonContent(
+                    required: ['name', 'price'],
+                    example: [
+                        'name' => 'iPhone 15 Pro',
+                        'description' => 'Latest iPhone model',
+                        'price' => 999.99,
+                        'discount' => 10,
+                        'quantity_stock' => 5,
+                        'amount' => 899.99,
+                        'image_path' => 'storage/iphones/iphone15.jpg',
+                    ]
+                ),
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        type: 'object',
+                        required: ['name', 'price'],
+                        properties: [
+                            new OA\Property(property: 'name', type: 'string', example: 'iPhone 15 Pro'),
+                            new OA\Property(property: 'description', type: 'string'),
+                            new OA\Property(property: 'price', type: 'number', example: 999.99),
+                            new OA\Property(property: 'discount', type: 'number'),
+                            new OA\Property(property: 'quantity_stock', type: 'integer', example: 5),
+                            new OA\Property(property: 'amount', type: 'number'),
+                            new OA\Property(property: 'image', type: 'string', format: 'binary', description: 'Imagen JPG, PNG o GIF (max 5MB)'),
+                            new OA\Property(property: 'image_path', type: 'string'),
+                        ]
+                    )
+                ),
+            ]
         ),
         responses: [
             new OA\Response(
@@ -94,7 +113,7 @@ class IphoneController extends Controller
     )]
     public function store(IphoneStoreRequest $request): JsonResponse
     {
-        $iphone = $this->service->create($request->validated());
+        $iphone = $this->service->create($request->validatedData());
 
         return (new IphoneResource($iphone))->response()->setStatusCode(201);
     }
@@ -140,15 +159,33 @@ class IphoneController extends Controller
         security: [['bearerAuth' => []]],
         parameters: [new OA\PathParameter(name: 'id', required: true, schema: new OA\Schema(type: 'integer'))],
         requestBody: new OA\RequestBody(
-            content: new OA\JsonContent(example: [
-                'name' => 'iPhone 15 Pro Max',
-                'description' => 'Updated description',
-                'price' => 1099.99,
-                'discount' => 15,
-                'quantity_stock' => 10,
-                'amount' => 934.99,
-                'image_path' => 'storage/iphones/iphone15pro.jpg',
-            ])
+            content: [
+                new OA\JsonContent(example: [
+                    'name' => 'iPhone 15 Pro Max',
+                    'description' => 'Updated description',
+                    'price' => 1099.99,
+                    'discount' => 15,
+                    'quantity_stock' => 10,
+                    'amount' => 934.99,
+                    'image_path' => 'storage/iphones/iphone15pro.jpg',
+                ]),
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        type: 'object',
+                        properties: [
+                            new OA\Property(property: 'name', type: 'string'),
+                            new OA\Property(property: 'description', type: 'string'),
+                            new OA\Property(property: 'price', type: 'number'),
+                            new OA\Property(property: 'discount', type: 'number'),
+                            new OA\Property(property: 'quantity_stock', type: 'integer'),
+                            new OA\Property(property: 'amount', type: 'number'),
+                            new OA\Property(property: 'image', type: 'string', format: 'binary', description: 'Imagen JPG, PNG o GIF'),
+                            new OA\Property(property: 'image_path', type: 'string'),
+                        ]
+                    )
+                ),
+            ]
         ),
         responses: [
             new OA\Response(response: 200, description: 'iPhone updated'),
@@ -159,7 +196,7 @@ class IphoneController extends Controller
     )]
     public function update(IphoneUpdateRequest $request, Iphone $iphone): JsonResponse
     {
-        $iphone = $this->service->update($iphone, $request->validated());
+        $iphone = $this->service->update($iphone, $request->validatedData());
 
         return (new IphoneResource($iphone))->response();
     }

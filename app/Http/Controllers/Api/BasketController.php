@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\BasketItemRequest;
 use App\Http\Requests\Api\BasketUpdateRequest;
+use App\Http\Resources\Api\AddBasketItemResource;
 use App\Http\Resources\Api\BasketResource;
-use App\Http\Resources\Api\BasketItemResource;
 use App\Http\Resources\Api\ChargeBasketResource;
 use App\Models\Basket;
+use App\Models\BasketItem;
 use App\Services\BasketService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -55,12 +56,56 @@ class BasketController extends Controller
         return response()->json(null, 204);
     }
 
-    #[OA\Post(path: '/baskets/{id}/items', tags: ['Baskets'], summary: 'Add item to basket', operationId: 'baskets.addItem', security: [['bearerAuth' => []]], parameters: [new OA\PathParameter(name: 'id', required: true, schema: new OA\Schema(type: 'integer'))], requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(required: ['product_type', 'product_id', 'price'], example: ['product_type' => 'iphone', 'product_id' => 1, 'price' => 999.99, 'quantity' => 2])), responses: [new OA\Response(response: 201, description: 'Created'), new OA\Response(response: 401, description: 'Unauthenticated'), new OA\Response(response: 404, description: 'Not found')])]
+    #[OA\Post(
+        path: '/baskets/{id}/items',
+        tags: ['Baskets'],
+        summary: 'Add item to basket',
+        operationId: 'baskets.addItem',
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\PathParameter(name: 'id', required: true, schema: new OA\Schema(type: 'integer'))],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['product_type', 'product_id'],
+                example: ['product_type' => 'iphone', 'product_id' => 1, 'quantity' => 2]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Item added'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Not found'),
+            new OA\Response(response: 422, description: 'Product not found or insufficient stock'),
+        ]
+    )]
     public function addItem(BasketItemRequest $request, Basket $basket): JsonResponse
     {
-        $item = $this->service->addItem($basket, $request->validated());
+        $result = $this->service->addItem($basket, $request->validated());
 
-        return (new BasketItemResource($item))->response()->setStatusCode(201);
+        return (new AddBasketItemResource($result))->response()->setStatusCode(201);
+    }
+
+    #[OA\Delete(
+        path: '/baskets/{id}/items/{itemId}',
+        tags: ['Baskets'],
+        summary: 'Remove item from basket',
+        operationId: 'baskets.removeItem',
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\PathParameter(name: 'id', required: true, schema: new OA\Schema(type: 'integer'), description: 'Basket ID'),
+            new OA\PathParameter(name: 'itemId', required: true, schema: new OA\Schema(type: 'integer'), description: 'Basket item ID'),
+        ],
+        responses: [
+            new OA\Response(response: 204, description: 'Item removed, stock restored'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Not found'),
+            new OA\Response(response: 422, description: 'Cannot modify charged basket or item does not belong to basket'),
+        ]
+    )]
+    public function removeItem(Basket $basket, BasketItem $item): JsonResponse
+    {
+        $this->service->removeItem($basket, $item);
+
+        return response()->json(null, 204);
     }
 
     #[OA\Post(path: '/baskets/{id}/charge', tags: ['Baskets'], summary: 'Charge basket (complete purchase)', operationId: 'baskets.charge', security: [['bearerAuth' => []]], parameters: [new OA\PathParameter(name: 'id', required: true, schema: new OA\Schema(type: 'integer'))], responses: [new OA\Response(response: 200, description: 'OK'), new OA\Response(response: 401, description: 'Unauthenticated'), new OA\Response(response: 404, description: 'Not found'), new OA\Response(response: 422, description: 'Basket empty or already charged')])]
